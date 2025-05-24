@@ -7,6 +7,9 @@ import ProductDetail from "./pages/ProductDetail";
 import Login from "./pages/Login";
 import Register from "./pages/Register";
 import { AuthProvider } from "./context/AuthContext"; // ✅ Perbaikan typo
+import AdminDashboard from "./pages/AdminDashboard";
+import AdminProducts from "./pages/AdminProducts";
+import AdminProductsCreate from "./pages/AdminProductsCreate";
 
 function App() {
   return (
@@ -19,6 +22,12 @@ function App() {
           <Route path="/products/:id" element={<ProductDetail />} />
           <Route path="/login" element={<Login />} />
           <Route path="/register" element={<Register />} />
+
+      {/* Admin Routes */}
+          <Route path='/admin' element={<AdminDashboard/>} />
+          <Route path='/admin/products' element={<AdminProducts/>} />
+          <Route path='/admin/products/new' element={<AdminProductsCreate/>} />
+
         </Routes>
       </BrowserRouter>
     </AuthProvider>
