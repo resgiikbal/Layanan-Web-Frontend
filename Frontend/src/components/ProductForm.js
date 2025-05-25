@@ -71,7 +71,7 @@ const ProductForm = ({
 
         <div>
           <label className="block text-sm font-medium text-gray-700">
-            kategori
+            Kategori
           </label>
           <select
             name="category_id"
