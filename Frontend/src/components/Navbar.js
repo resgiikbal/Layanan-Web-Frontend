@@ -1,6 +1,7 @@
 import React from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
+import CartIcon from './CartIcon';
 
 const Navbar = () => {
     const { user, logout, isAdmin } = useAuth();
@@ -20,16 +21,17 @@ const Navbar = () => {
                     </Link>
 
                     <div className='flex items-center space-x-8'>
-                        {/* Public Links */}
-                        {!isAdmin && (
+                        {/* Produk Bisa Dilihat Semua Orang Kecuali Admin */}
+                        {!isAdmin() && (
                             <Link to="/products" className='text-gray-600 hover:text-blue-600'>
                                 Produk
                             </Link>
                         )}
-                        
+
+                        {/* Authenticated User Links */}
                         {user ? (
                             <div className='flex items-center space-x-6'>
-                                {isAdmin && (
+                                {isAdmin() ? (
                                     <>
                                         <Link to='/admin' className='text-gray-600 hover:text-blue-600'>
                                             AdminDashboard
@@ -38,8 +40,18 @@ const Navbar = () => {
                                             Produk
                                         </Link>
                                     </>
+                                ) : (
+                                    <>
+                                        <Link to="/dashboard" className='text-gray-600 hover:text-blue-600'>
+                                            Dashboard
+                                        </Link>
+                                        <Link to="/orders" className='text-gray-600 hover:text-blue-600'>
+                                            Pesanan
+                                        </Link>
+                                        <CartIcon />
+                                    </>
                                 )}
-                                
+
                                 <button onClick={handleLogout} className='text-gray-600 hover:text-blue-600'>
                                     Keluar
                                 </button>

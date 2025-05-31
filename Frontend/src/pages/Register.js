@@ -68,7 +68,7 @@ const Register = () => {
                             </div>
                             <div>
                                 <label htmlFor="last_name" className="block text-sm font-medium text-gray-700">
-                                    Nama Belakang
+                                Nama Belakang
                                 </label>
                                 <input
                                     id="last_name"
