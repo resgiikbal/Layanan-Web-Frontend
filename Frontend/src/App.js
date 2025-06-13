@@ -6,21 +6,43 @@ import Products from "./pages/Products";
 import ProductDetail from "./pages/ProductDetail";
 import Login from "./pages/Login";
 import Register from "./pages/Register";
+import Cart from "./pages/Cart";
 import { AuthProvider } from "./context/AuthContext"; // ✅ Perbaikan typo
+import AdminDashboard from "./pages/AdminDashboard";
+import AdminProducts from "./pages/AdminProducts";
+import AdminProductsCreate from "./pages/AdminProductsCreate";
+import AdminProductEdit from "./pages/AdminProductEdit";
+import Checkout from "./pages/Checkout";
+import OrderSucces from "./pages/OrderSucces";
+import { CartProvider } from "./context/cartContext";
+import Orders from "./pages/Orders";
 
 function App() {
   return (
     <AuthProvider>
+      <CartProvider>
       <BrowserRouter>
         <Navbar />
         <Routes>
           <Route path="/" element={<Home />} />
           <Route path="/products" element={<Products />} />
           <Route path="/products/:id" element={<ProductDetail />} />
+          <Route path="/cart" element={<Cart />} />
+          <Route path="/checkout" element={<Checkout />} />
+          <Route path="/order-succes" element={<OrderSucces />} />
+          <Route path="/orders" element={<Orders />} />
           <Route path="/login" element={<Login />} />
           <Route path="/register" element={<Register />} />
+
+      {/* Admin Routes */}
+          <Route path='/admin' element={<AdminDashboard/>} />
+          <Route path='/admin/products' element={<AdminProducts/>} />
+          <Route path='/admin/products/new' element={<AdminProductsCreate/>} />
+          <Route path='/admin/products/edit/:id' element={<AdminProductEdit/>} />
+
         </Routes>
       </BrowserRouter>
+      </CartProvider>
     </AuthProvider>
   );
 }

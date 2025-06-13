@@ -24,21 +24,24 @@ const Register = () => {
     const handleSubmit = async (e) => {
         e.preventDefault();
         setError('');
-
+    
         const result = await register(formData);
-        if (result.succes) {
-            navigate('/');
+        console.log("Result after register:", result); // Tambahkan ini untuk debug
+    
+        if (result.success) {
+            navigate('/');  // Jika sukses, pindah ke halaman utama
         } else {
             setError(result.message);
         }
     };
+    
 
     return (
         <div className="min-h-screen flex items-center justify-center bg-gray-50 py-12 px-4 sm:px-6 lg:px-8">
             <div className="max-w-md w-full space-y-8">
                 <div>
                     <h2 className="mt-6 text-center text-3xl font-extrabold text-gray-900">
-                        Membuat akun
+                    Membuat Akun
                     </h2>
                 </div>
                 <form className="mt-8 space-y-6" onSubmit={handleSubmit}>
@@ -51,7 +54,7 @@ const Register = () => {
                         <div className="grid grid-cols-2 gap-4">
                             <div>
                                 <label htmlFor="first_name" className="block text-sm font-medium text-gray-700">
-                                    Nama Depan
+                                Nama Depan
                                 </label>
                                 <input
                                     id="first_name"
@@ -65,7 +68,7 @@ const Register = () => {
                             </div>
                             <div>
                                 <label htmlFor="last_name" className="block text-sm font-medium text-gray-700">
-                                    Nama Belakang
+                                Nama Belakang
                                 </label>
                                 <input
                                     id="last_name"
@@ -81,7 +84,7 @@ const Register = () => {
                     </div>
                     <div>
                         <label htmlFor="email" className="block text-sm font-medium text-gray-700">
-                            Email 
+                            Email
                         </label>
                         <input
                             id="email"
