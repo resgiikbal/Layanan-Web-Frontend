@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
 import { useCart } from '../context/cartContext';
+
 const ProductDetails = () => {
   const { id } = useParams();
   const [product, setProduct] = useState(null);
@@ -8,7 +9,7 @@ const ProductDetails = () => {
   const [error, setError] = useState(null);
   const [selectedImage, setSelectedImage] = useState(0);
 
-  const {addToCart} = useCart();
+  const { addToCart } = useCart();
 
   useEffect(() => {
     const fetchProduct = async () => {
@@ -43,12 +44,10 @@ const ProductDetails = () => {
     return <div className="text-center py-8 text-red-600">{error || 'Product not found'}</div>;
   }
 
-  // Pastikan product.images adalah array
   const images = Array.isArray(product.images) ? product.images : product.images?.split(',') || [];
 
   return (
     <div className="container mx-auto px-4 py-8 flex flex-col md:flex-row gap-8">
-      
       {/* Gambar */}
       <div className="md:w-1/2">
         {images.length > 0 ? (
@@ -59,7 +58,7 @@ const ProductDetails = () => {
           />
         ) : (
           <div className="w-full h-96 bg-gray-200 rounded-lg flex items-center justify-center">
-             Tidak Ada Gambar Tersedia
+            Tidak Ada Gambar Tersedia
           </div>
         )}
 
@@ -74,7 +73,7 @@ const ProductDetails = () => {
               >
                 <img
                   src={`http://localhost:5000/api/products/images/${image}`}
-                  alt={`${product.name} Thumbnail ${index + 1}`} // Perbaiki sintaksis di sini
+                  alt={`${product.name} Thumbnail ${index + 1}`}
                   className="w-full h-24 object-cover rounded"
                 />
               </button>
@@ -110,7 +109,6 @@ const ProductDetails = () => {
           {product.stock > 0 ? 'Tambahkan ke keranjang' : 'Out of Stock'}
         </button>
       </div>
-
     </div>
   );
 };
