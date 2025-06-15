@@ -29,7 +29,7 @@ const ProductForm = ({
       <form onSubmit={onSubmit} className="space-y-6">
         <div>
           <label className="block text-sm font-medium text-gray-700">
-            Nama Produk
+            Nama produk
           </label>
           <input
             type="text"
@@ -80,7 +80,7 @@ const ProductForm = ({
             required
             className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
           >
-            <option value="">Select a value</option>
+            <option value="">Pilih Kategori</option>
             {categories.map(category => (
               <option key={category.id} value={category.id}>
                 {category.name}
@@ -106,7 +106,7 @@ const ProductForm = ({
         {isEdit && currentImages && currentImages.length > 0 && (
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-2">
-              Upload Gambar
+            Gambar Saat Ini
             </label>
             <div className="grid grid-cols-4 gap-4">
               {currentImages.map((image, index) => (

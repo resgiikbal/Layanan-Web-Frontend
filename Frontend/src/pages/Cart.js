@@ -40,7 +40,7 @@ const Cart = () => {
 
                             <div className='flex-1'>
                                 <h3 className='font-semibold'>{item.name}</h3>
-                                <p className='text-gray-600'>Rp {item.price}</p>
+                                <p className='text-gray-600'>Rs {item.price}</p>
 
                                 <div className='flex items-center gap-4 mt-2'>
                                     <select
@@ -59,7 +59,7 @@ const Cart = () => {
                                         onClick={() => removeFromCart(item.id)}
                                         className='text-red-600 hover:text-red-700'
                                     >
-                                        Menghapus
+                                       Menghapus
                                     </button>
                                 </div>
                             </div>
@@ -88,7 +88,7 @@ const Cart = () => {
 
                         <div className='space-y-2 mb-4'>
                             <div className='flex justify-between'>
-                                <span>Jumlah keseluruhan ({cart.totalItems} items)</span>
+                                <span>Jumlah keseluruhan({cart.totalItems} items)</span>
                                 <span>Rp {cart.totalAmount.toFixed(2)}</span>
                             </div>
                             <div className='flex justify-between'>

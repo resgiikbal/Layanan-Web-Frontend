@@ -54,7 +54,7 @@ const Register = () => {
                         <div className="grid grid-cols-2 gap-4">
                             <div>
                                 <label htmlFor="first_name" className="block text-sm font-medium text-gray-700">
-                                    Nama Depan
+                                Nama Depan
                                 </label>
                                 <input
                                     id="first_name"
@@ -84,7 +84,7 @@ const Register = () => {
                     </div>
                     <div>
                         <label htmlFor="email" className="block text-sm font-medium text-gray-700">
-                            Email 
+                            Email
                         </label>
                         <input
                             id="email"
