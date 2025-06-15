@@ -161,7 +161,7 @@ const Checkout = () => {
               disabled={loading}
               className='w-full bg-blue-600 text-white py-4 rounded-lg hover:bg-blue-700 disabled:bg-blue-300'
             >
-              {loading ? 'Processing...' : 'Place Order'}
+              {loading ? 'Processing...' : 'Pesan Sekarang'}
             </button>
           </form>
         </div>
