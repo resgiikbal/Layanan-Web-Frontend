@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
-
+import { formatRupiah } from '../utils/format';
 const Products = () => {
   const [products, setProducts] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -39,7 +39,7 @@ const Products = () => {
               <div className='p-4'>
                 <h2 className="text-xl font-semibold mb-2">{product.name}</h2>
                 <p className='text-gray-600 mb-2'>{product.category_name}</p>
-                <p className='text-xl font-bold text-blue-600'>{product.price}</p>
+                <p className='text-xl font-bold text-blue-600'>{formatRupiah(product.price)}</p>
               </div>
             </div>
           </Link>

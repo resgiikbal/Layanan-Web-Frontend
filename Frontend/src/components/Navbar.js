@@ -34,16 +34,19 @@ const Navbar = () => {
                                 {isAdmin() ? (
                                     <>
                                         <Link to='/admin' className='text-gray-600 hover:text-blue-600'>
-                                            AdminDashboard
+                                            Dasbor Admin
                                         </Link>
                                         <Link to='/admin/products' className='text-gray-600 hover:text-blue-600'>
                                             Produk
+                                        </Link >
+                                        <Link to='/admin/orders' className='text-gray-600 hover:text-blue-600'>
+                                            Pesanan
                                         </Link>
                                     </>
                                 ) : (
                                     <>
                                         <Link to="/dashboard" className='text-gray-600 hover:text-blue-600'>
-                                            Dashboard
+                                            Dasbor
                                         </Link>
                                         <Link to="/orders" className='text-gray-600 hover:text-blue-600'>
                                             Pesanan

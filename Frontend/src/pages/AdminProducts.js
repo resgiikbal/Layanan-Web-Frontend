@@ -1,6 +1,16 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
+// Fungsi format Rupiah
+const formatRupiah = (angka) => {
+  return new Intl.NumberFormat("id-ID", {
+    style: "currency",
+    currency: "IDR",
+    minimumFractionDigits: 0, // ⬅️ menghilangkan koma dan .00
+  }).format(Number(angka)).replace("Rp", "Rp ");
+};
+
+
 const AdminProducts = () => {
     const [products, setProducts] = useState([]);
     const [loading, setLoading] = useState(true);
@@ -51,11 +61,11 @@ const AdminProducts = () => {
     return (
         <div className='container mx-auto px-4 py-8'>
             <div className='flex justify-between items-center mb-6'>
-                <h1 className='text-3xl font-bold'>Produk</h1>
+                <h1 className='text-3xl font-bold'>Mengelola Produk</h1>
                 <button 
                     onClick={() => navigate('/admin/products/new')}
                     className='bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700'>
-                    Tambah Produk
+                   Tambah Produk
                 </button>
             </div>
             <div className='bg-white rounded-lg shadow-md overflow-hidden'>
@@ -98,10 +108,12 @@ const AdminProducts = () => {
                                     </div>
                                 </td>
                                 <td className='px-6 py-4 whitespace-nowrap'>
-                                <div className='text-sm text-gray-900'> {product.name}</div>
+                               <div className='text-sm text-gray-900'> {product.category_name || 'Tanpa Kategori'}</div>
+
                                 </td>
                                 <td className='px-6 py-4 whitespace-nowrap'>
-                                <div className='text-sm text-gray-900'> ${product.price}</div>
+                              <div className='text-sm text-gray-900'>{formatRupiah(product.price)}</div>
+
                                 </td>
                                 <td className='px-6 py-4 whitespace-nowrap'>
                                 <div className='text-sm text-gray-900'>

@@ -33,7 +33,7 @@ const AdminProductCreate = () => {
       const data = await response.json();
       setCategories(data);
     } catch (error) {
-      console.error('Error fetching categories:', error);
+      console.error('Terjadi kesalahan saat mengambil kategori:', error);
       setError('Gagal mengambil data kategori');
     }
   };
@@ -63,7 +63,7 @@ const AdminProductCreate = () => {
       });
 
       if (!response.ok) {
-        throw new Error('Failed to create product'); // ✅ Perbaikan penggunaan Error
+        throw new Error('Gagal membuat produk'); // ✅ Perbaikan penggunaan Error
       }
 
       navigate('/admin/products');
@@ -86,7 +86,7 @@ const AdminProductCreate = () => {
       onImageChange={(e) => setImages(Array.from(e.target.files))}
       loading={loading}
       error={error}
-      submitText="Create Product"
+      submitText="Buat Produk"
       onCancel={() => navigate('/admin/products')}
     />
   );
