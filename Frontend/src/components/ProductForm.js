@@ -1,4 +1,5 @@
 import React from 'react';
+import { formatRupiah } from '../utils/format';
 
 const ProductForm = ({
     formData,
@@ -29,7 +30,7 @@ const ProductForm = ({
       <form onSubmit={onSubmit} className="space-y-6">
         <div>
           <label className="block text-sm font-medium text-gray-700">
-            Nama produk
+            Nama Produk
           </label>
           <input
             type="text"
@@ -58,15 +59,17 @@ const ProductForm = ({
           <label className="block text-sm font-medium text-gray-700">
             Harga
           </label>
-          <input
-            type="number"
-            name="price"
-            value={formData.price}
-            onChange={onChange}
-            required
-            step="0.01"
-            className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
-          />
+         <input
+  type="text"
+  name="price"
+  value={formatRupiah(formData.price)}
+  onChange={(e) => {
+    const rawValue = e.target.value.replace(/[^\d]/g, "");
+    onChange({ target: { name: 'price', value: rawValue } });
+  }}
+  className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
+/>
+
         </div>
 
         <div>

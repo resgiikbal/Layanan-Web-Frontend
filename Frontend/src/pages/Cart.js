@@ -1,6 +1,8 @@
 import React from 'react';
 import { useCart } from '../context/cartContext';
 import { Link } from 'react-router-dom';
+import { formatRupiah } from '../utils/format';
+
 
 const Cart = () => {
     const { cart, removeFromCart, updateQuantity, clearCart } = useCart();
@@ -14,7 +16,7 @@ const Cart = () => {
                         to="/products"
                         className='text-blue-600 hover:text-blue-700'
                     >
-                        Lanjutkan Belanja
+                       Lanjutkan Belanja
                     </Link>
                 </div>
             </div>
@@ -40,7 +42,8 @@ const Cart = () => {
 
                             <div className='flex-1'>
                                 <h3 className='font-semibold'>{item.name}</h3>
-                                <p className='text-gray-600'>Rs {item.price}</p>
+                               <p className='text-gray-600'>{formatRupiah(item.price)}</p>
+
 
                                 <div className='flex items-center gap-4 mt-2'>
                                     <select
@@ -59,15 +62,16 @@ const Cart = () => {
                                         onClick={() => removeFromCart(item.id)}
                                         className='text-red-600 hover:text-red-700'
                                     >
-                                       Menghapus
+                                         Menghapus
                                     </button>
                                 </div>
                             </div>
 
                             <div className='text-right'>
-                                <p className='font-semibold'>
-                                    Rp {(item.price * item.quantity).toFixed(2)}
-                                </p>
+                              <p className='font-semibold'>
+                                {formatRupiah(item.price * item.quantity)}
+                            </p>
+
                             </div>
                         </div>
                     ))}
@@ -77,7 +81,7 @@ const Cart = () => {
                             onClick={clearCart}
                             className='text-red-600 hover:text-red-700'
                         >
-                            Kosongkan Keranjang
+                           Kosongkan Keranjang
                         </button>
                     </div>
                 </div>
@@ -88,8 +92,10 @@ const Cart = () => {
 
                         <div className='space-y-2 mb-4'>
                             <div className='flex justify-between'>
-                                <span>Jumlah keseluruhan({cart.totalItems} items)</span>
-                                <span>Rp {cart.totalAmount.toFixed(2)}</span>
+                              <span>
+                                Jumlah keseluruhan ({cart.totalItems} item): {formatRupiah(cart.totalAmount)}
+                             </span>
+                                <span>{formatRupiah(cart.totalAmount)}</span>
                             </div>
                             <div className='flex justify-between'>
                                 <span>Pengiriman</span>
@@ -100,7 +106,7 @@ const Cart = () => {
                         <div className='border-t pt-4'>
                             <div className='flex justify-between font-bold'>
                                 <span>Total</span>
-                                <span>Rp {cart.totalAmount.toFixed(2)}</span>
+                              <span>{formatRupiah(cart.totalAmount)}</span>
                             </div>
                         </div>
 
@@ -108,7 +114,7 @@ const Cart = () => {
                             to="/checkout"
                             className='w-full bg-blue-600 text-white py-3 rounded-lg mt-6 hover:bg-blue-700 inline-block text-center'
                         >
-                            Lanjutkan ke Pembayaran
+                             Lanjutkan ke Pembayaran
                         </Link>
                     </div>
                 </div>

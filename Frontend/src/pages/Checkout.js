@@ -2,6 +2,7 @@ import React, { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useCart } from '../context/cartContext'
 import { useAuth } from '../context/AuthContext'
+import { formatRupiah } from '../utils/format';
 
 const Checkout = () => {
   const { cart, clearCart } = useCart();
@@ -78,7 +79,7 @@ const Checkout = () => {
           <form className='space-y-4' onSubmit={handleSubmit}>
             {/* Full Name */}
             <div>
-              <label className='block text-sm font-medium text-gray-700'>Nama lengkap</label>
+              <label className='block text-sm font-medium text-gray-700'>Nama Lengkap</label>
               <input
                 type='text'
                 name='fullName'
@@ -144,7 +145,7 @@ const Checkout = () => {
 
             {/* Phone */}
             <div>
-              <label className='block text-sm font-medium text-gray-700'>Telepon</label>
+              <label className='block text-sm font-medium text-gray-700'>Nome HP</label>
               <input
                 type='text'
                 name='phone'
@@ -161,7 +162,7 @@ const Checkout = () => {
               disabled={loading}
               className='w-full bg-blue-600 text-white py-4 rounded-lg hover:bg-blue-700 disabled:bg-blue-300'
             >
-              {loading ? 'Processing...' : 'Pesan Sekarang'}
+              {loading ? 'Proses...' : 'Tempat Memesan'}
             </button>
           </form>
         </div>
@@ -176,14 +177,14 @@ const Checkout = () => {
                   <p className='font-medium'>{item.name}</p>
                   <p className='text-sm text-gray-600'>Jumlah: {item.quantity}</p>
                 </div>
-                <p>Rs {(item.price * item.quantity).toFixed(2)}</p>
+               <p>{formatRupiah(item.price * item.quantity)}</p>
               </div>
             ))}
 
             <div className='mt-4 space-y-2'>
               <div className='flex justify-between'>
                 <span>Jumlah keseluruhan</span>
-                <span>Rp {cart.totalAmount.toFixed(2)}</span>
+                <span>{formatRupiah(cart.totalAmount)}</span>
               </div>
               <div className='flex justify-between'>
                 <span>Pengiriman</span>
@@ -191,7 +192,7 @@ const Checkout = () => {
               </div>
               <div className='flex justify-between font-bold text-lg pt-2 border-t'>
                 <span>Total</span>
-                <span>Rp {cart.totalAmount.toFixed(2)}</span>
+                <span>{formatRupiah(cart.totalAmount)}</span>
               </div>
             </div>
           </div>

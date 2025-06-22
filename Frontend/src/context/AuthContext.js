@@ -3,76 +3,97 @@ import React, { createContext, useState, useContext, useEffect } from "react";
 const AuthContext = createContext(null);
 
 export const AuthProvider = ({ children }) => {
-    const [user, setUser] = useState(null);
-    const [loading, setLoading] = useState(true);
+  const [user, setUser] = useState(null);
+  const [loading, setLoading] = useState(true);
 
-    useEffect(() => {
-        const token = localStorage.getItem("token");
-        if (token) {
-            // Logika verifikasi token bisa ditambahkan di sini
-            setLoading(false);
-        } else {
-            setLoading(false);
-        }
-    }, []);
+  useEffect(() => {
+    const token = localStorage.getItem("token");
 
-    const login = async (email, password) => {
-        try {
-            const response = await fetch("http://localhost:5000/api/auth/login", {
-                method: "POST",
-                headers: {
-                    "Content-Type": "application/json",
-                },
-                body: JSON.stringify({ email, password }),
-            });
+    if (token && token !== "undefined") {
+      // ✅ Coba ambil data user dari server menggunakan token
+      fetch("http://localhost:5000/api/auth/me", {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      })
+        .then((res) => {
+          if (!res.ok) throw new Error("Invalid token");
+          return res.json();
+        })
+        .then((data) => {
+          if (data.user) {
+            setUser(data.user); // ✅ Token valid, set user
+          } else {
+            localStorage.removeItem("token");
+            setUser(null);
+          }
+        })
+        .catch(() => {
+          localStorage.removeItem("token");
+          setUser(null);
+        })
+        .finally(() => setLoading(false));
+    } else {
+      setLoading(false);
+    }
+  }, []);
 
-            const data = await response.json();
-            if (response.ok) {
-                localStorage.setItem("token", data.token);
-                setUser(data.user);
-                return { success: true };
-            }
-            return { success: false, message: data.message };
-        } catch (error) {
-            return { success: false, message: "An error occurred" };
-        }
-    };
+  const login = async (email, password) => {
+    try {
+      const response = await fetch("http://localhost:5000/api/auth/login", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ email, password }),
+      });
 
-    const logout = () => {
-        localStorage.removeItem("token");
-        setUser(null);
-    };
+      const data = await response.json();
+      if (response.ok) {
+        localStorage.setItem("token", data.token);
+        setUser(data.user);
+        return { success: true };
+      }
+      return { success: false, message: data.message };
+    } catch (error) {
+      return { success: false, message: "An error occurred" };
+    }
+  };
 
-    const register = async (userData) => {
-        try {
-            const response = await fetch("http://localhost:5000/api/auth/register", {
-                method: "POST",
-                headers: {
-                    "Content-Type": "application/json",
-                },
-                body: JSON.stringify(userData),
-            });
+  const logout = () => {
+    localStorage.removeItem("token");
+    setUser(null);
+  };
 
-            const data = await response.json();
-            if (response.ok) {
-                localStorage.setItem("token", data.token);
-                setUser(data.user);
-                return { success: true };
-            }
-            return { success: false, message: data.message };
-        } catch (error) {
-            return { success: false, message: "An error occurred" };
-        }
-    };
+  const register = async (userData) => {
+    try {
+      const response = await fetch("http://localhost:5000/api/auth/register", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(userData),
+      });
 
-    const isAdmin = () => user?.role === 'admin'
+      const data = await response.json();
+      if (response.ok) {
+        localStorage.setItem("token", data.token);
+        setUser(data.user);
+        return { success: true };
+      }
+      return { success: false, message: data.message };
+    } catch (error) {
+      return { success: false, message: "An error occurred" };
+    }
+  };
 
+  const isAdmin = () => user?.role === "admin";
 
-    return (
-        <AuthContext.Provider value={{ user, login, logout, loading, register, isAdmin }}>
-            {!loading && children}
-        </AuthContext.Provider>
-    );
+  return (
+    <AuthContext.Provider value={{ user, login, logout, register, isAdmin }}>
+      {!loading && children}
+    </AuthContext.Provider>
+  );
 };
 
 export const useAuth = () => useContext(AuthContext);

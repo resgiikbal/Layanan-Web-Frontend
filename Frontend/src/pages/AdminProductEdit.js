@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import ProductForm from '../components/ProductForm';
+import { formatRupiah } from '../utils/format';
 
 const AdminProductEdit = () => {
   const { id } = useParams();
@@ -142,7 +143,7 @@ const AdminProductEdit = () => {
       onImageChange={(e) => setNewImages(Array.from(e.target.files))}
       loading={loading}
       error={error}
-      submitText="Update Product"
+      submitText="Perbarui Produk"
       currentImages={currentImages}
       onDeleteImage={handleDeleteImage}
       isEdit={true}
