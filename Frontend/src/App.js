@@ -16,7 +16,9 @@ import AdminOrders from "./pages/AdminOrders";
 import Checkout from "./pages/Checkout";
 import OrderSucces from "./pages/OrderSucces";
 import { CartProvider } from "./context/cartContext";
+import AdminUsers from './pages/AdminUsers';
 import Orders from "./pages/Orders";
+import UserDashboard from './pages/UserDashboard';
 
 function App() {
   return (
@@ -34,14 +36,14 @@ function App() {
           <Route path="/orders" element={<Orders />} />
           <Route path="/login" element={<Login />} />
           <Route path="/register" element={<Register />} />
-
+          <Route path="/admin/users" element={<AdminUsers />} />
       {/* Admin Routes */}
           <Route path='/admin' element={<AdminDashboard/>} />
           <Route path='/admin/products' element={<AdminProducts/>} />
           <Route path='/admin/products/new' element={<AdminProductsCreate/>} />
           <Route path='/admin/products/edit/:id' element={<AdminProductEdit/>} />
           <Route path='/admin/orders' element={<AdminOrders/>} />
-
+          <Route path="/dashboard" element={<UserDashboard />} />
         </Routes>
       </BrowserRouter>
       </CartProvider>
