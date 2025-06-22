@@ -17,6 +17,7 @@ import Checkout from "./pages/Checkout";
 import OrderSucces from "./pages/OrderSucces";
 import { CartProvider } from "./context/cartContext";
 import AdminUsers from './pages/AdminUsers';
+import AdminCategories from './pages/AdminCategories';
 import Orders from "./pages/Orders";
 import UserDashboard from './pages/UserDashboard';
 
@@ -43,6 +44,7 @@ function App() {
           <Route path='/admin/products/new' element={<AdminProductsCreate/>} />
           <Route path='/admin/products/edit/:id' element={<AdminProductEdit/>} />
           <Route path='/admin/orders' element={<AdminOrders/>} />
+          <Route path="/admin/categories" element={<AdminCategories />} />
           <Route path="/dashboard" element={<UserDashboard />} />
         </Routes>
       </BrowserRouter>
