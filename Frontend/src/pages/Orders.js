@@ -1,10 +1,13 @@
 import React, { useState, useEffect } from 'react';
-import { formatRupiah } from '../utils/format'; // pastikan path sesuai struktur proyekmu
+import { formatRupiah } from '../utils/format';
+
 const Orders = () => {
   const [orders, setOrders] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
   const [selectedOrder, setSelectedOrder] = useState(null);
+  const [selectedFile, setSelectedFile] = useState(null);
+  const [uploadingOrderId, setUploadingOrderId] = useState(null);
 
   useEffect(() => {
     fetchOrders();
@@ -48,8 +51,76 @@ const Orders = () => {
     );
   };
 
-  if (loading) return <div className='text-center py-8'>Proses...</div>;
-  if (error) return <div className='text-center py-8 text-red-600'>{error}</div>;
+  const handleFileChange = (orderId, event) => {
+    const file = event.target.files[0];
+    if (file) {
+      if (file.size > 5 * 1024 * 1024) { // 5MB limit
+        alert('Ukuran file terlalu besar. Maksimal 5MB');
+        return;
+      }
+      if (!['image/jpeg', 'image/png'].includes(file.type)) {
+        alert('Format file tidak didukung. Gunakan JPG atau PNG');
+        return;
+      }
+      setSelectedFile(file);
+      setUploadingOrderId(orderId);
+    }
+  };
+
+  const handleUploadPaymentProof = async (orderId) => {
+    if (!selectedFile) {
+      alert('Pilih file terlebih dahulu');
+      return;
+    }
+
+    const formData = new FormData();
+    formData.append('paymentProof', selectedFile);
+
+    try {
+      const response = await fetch(`http://localhost:5000/api/orders/${orderId}/payment-proof`, {
+        method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${localStorage.getItem('token')}`,
+        },
+        body: formData
+      });
+
+      if (!response.ok) {
+        throw new Error('Gagal mengunggah bukti pembayaran');
+      }
+
+      alert('Bukti pembayaran berhasil diunggah');
+      setSelectedFile(null);
+      setUploadingOrderId(null);
+    } catch (error) {
+      console.error('Error:', error);
+      alert('Gagal mengunggah bukti pembayaran');
+    }
+  };
+
+  const viewPaymentProof = async (orderId) => {
+    try {
+      const response = await fetch(`http://localhost:5000/api/orders/${orderId}/payment-proof`, {
+        headers: {
+          'Authorization': `Bearer ${localStorage.getItem('token')}`,
+        },
+      });
+
+      if (!response.ok) {
+        throw new Error('Gagal mengambil bukti pembayaran');
+      }
+
+      const data = await response.json();
+      if (data.payment_proof) {
+        window.open(`http://localhost:5000/uploads/payment-proofs/${data.payment_proof}`, '_blank');
+      } else {
+        alert('Bukti pembayaran belum diunggah');
+      }
+    } catch (error) {
+      console.error('Error:', error);
+      alert('Gagal mengambil bukti pembayaran');
+    }
+  };
 
   return (
     <div className='container mx-auto px-4 py-8'>
@@ -73,15 +144,40 @@ const Orders = () => {
 
               <div className='flex justify-between items-center mt-4'>
                 <div>
-                 <p className='font-medium'>Jumlah Total: {formatRupiah(order.total_amount)}</p>
+                  <p className='font-medium'>Jumlah Total: {formatRupiah(order.total_amount)}</p>
                   <p className='text-sm text-gray-600'>Barang: {formatRupiah(order.total_amount)}</p>
                 </div>
-                <button
-                  onClick={() => setSelectedOrder(order)}
-                  className='text-blue-600 hover:text-blue-800'
-                >
-                    Lihat Detail
-                </button>
+                <div className='flex flex-col gap-2'>
+                  <div className='flex items-center gap-2'>
+                    <input
+                      type='file'
+                      accept='image/jpeg,image/png'
+                      onChange={(e) => handleFileChange(order.id, e)}
+                      className='text-sm'
+                    />
+                    <button
+                      onClick={() => handleUploadPaymentProof(order.id)}
+                      disabled={uploadingOrderId !== order.id || !selectedFile}
+                      className='bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600 text-sm disabled:bg-gray-400'
+                    >
+                      Unggah Bukti
+                    </button>
+                  </div>
+                  <div className='flex gap-2'>
+                    <button
+                      onClick={() => viewPaymentProof(order.id)}
+                      className='bg-green-500 text-white px-4 py-2 rounded hover:bg-green-600 text-sm'
+                    >
+                      Lihat Bukti
+                    </button>
+                    <button
+                      onClick={() => setSelectedOrder(order)}
+                      className='text-blue-600 hover:text-blue-800'
+                    >
+                      Lihat Detail
+                    </button>
+                  </div>
+                </div>
               </div>
             </div>
           ))}

@@ -7,6 +7,8 @@ const AdminOrders = () => {
   const [error, setError] = useState('');
   const [selectedOrder, setSelectedOrder] = useState(null);
   const [filteredStatus, setFilteredStatus] = useState('all');
+  const [filteredPaymentProof, setFilteredPaymentProof] = useState('all');
+  const [unreadPaymentProofs, setUnreadPaymentProofs] = useState(0);
 
   useEffect(() => {
     fetchOrders();
@@ -21,6 +23,12 @@ const AdminOrders = () => {
       });
       const data = await response.json();
       setOrders(Array.isArray(data) ? data : data.orders || []);
+      
+      // Hitung jumlah bukti pembayaran yang belum dilihat
+      const unreadCount = data.filter(order => 
+        order.payment_proof && !order.payment_proof_viewed
+      ).length;
+      setUnreadPaymentProofs(unreadCount);
     } catch (error) {
       setError('Error fetching orders');
       console.error('Error:', error);
@@ -29,9 +37,52 @@ const AdminOrders = () => {
     }
   };
 
+  const viewPaymentProof = async (orderId) => {
+    try {
+      const response = await fetch(`http://localhost:5000/api/admin/orders/${orderId}/payment-proof`, {
+        headers: {
+          'Authorization': `Bearer ${localStorage.getItem('token')}`,
+        },
+      });
+
+      const data = await response.json();
+      
+      if (!response.ok) {
+        if (response.status === 404) {
+          alert('Bukti pembayaran belum diunggah oleh pembeli');
+        } else {
+          throw new Error('Terjadi kesalahan saat mengambil bukti pembayaran');
+        }
+        return;
+      }
+
+      if (!data.payment_proof) {
+        alert('Bukti pembayaran belum diunggah oleh pembeli');
+        return;
+      }
+
+      // Tandai bukti pembayaran sudah dilihat
+      await fetch(`http://localhost:5000/api/admin/orders/${orderId}/mark-payment-proof-viewed`, {
+        method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${localStorage.getItem('token')}`,
+        },
+      });
+
+      // Refresh data pesanan untuk memperbarui notifikasi
+      fetchOrders();
+
+      window.open(`http://localhost:5000/uploads/payment-proofs/${data.payment_proof}`, '_blank');
+    } catch (error) {
+      console.error('Error:', error);
+      alert(error.message || 'Terjadi kesalahan saat mengambil bukti pembayaran');
+    }
+  };
+
   const handleStatusUpdate = async (orderId, newStatus) => {
     try {
-      const response = await fetch(`http://localhost:5000/api/admin/orders/${orderId}/status`, {
+      // Update status pesanan
+      const statusResponse = await fetch(`http://localhost:5000/api/admin/orders/${orderId}/status`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
@@ -39,12 +90,27 @@ const AdminOrders = () => {
         },
         body: JSON.stringify({ status: newStatus })
       });
-
-      if (response.ok) {
-        fetchOrders(); // Refresh orders after update
-      } else {
+  
+      if (!statusResponse.ok) {
         throw new Error('Failed to update status');
       }
+  
+      // Jika status diubah menjadi Diproses atau Dibatalkan, tandai bukti pembayaran sebagai sudah dilihat
+      if (newStatus === 'Diproses' || newStatus === 'Dibatalkan') {
+        const markViewedResponse = await fetch(`http://localhost:5000/api/admin/orders/${orderId}/mark-payment-proof-viewed`, {
+          method: 'POST',
+          headers: {
+            'Authorization': `Bearer ${localStorage.getItem('token')}`,
+          },
+        });
+  
+        if (!markViewedResponse.ok) {
+          console.error('Gagal menandai bukti pembayaran sebagai sudah dilihat');
+        }
+      }
+  
+      // Refresh data pesanan
+      fetchOrders();
     } catch (error) {
       setError('Error updating order status');
       console.error('Error:', error);
@@ -63,32 +129,60 @@ const AdminOrders = () => {
   };
 
   const filteredOrders = Array.isArray(orders)
-    ? (filteredStatus === 'all'
-      ? orders
-      : orders.filter(order => order.status === filteredStatus))
+    ? orders.filter(order => {
+        // Filter berdasarkan status
+        const statusMatch = filteredStatus === 'all' || order.status === filteredStatus;
+        
+        // Filter berdasarkan bukti pembayaran
+        const paymentProofMatch = 
+          filteredPaymentProof === 'all' ||
+          (filteredPaymentProof === 'uploaded' && order.payment_proof) ||
+          (filteredPaymentProof === 'not_uploaded' && !order.payment_proof);
+        
+        return statusMatch && paymentProofMatch;
+      })
     : [];
-
-  if (loading) return <div className='text-center py-8'>Loading...</div>;
-  if (error) return <div className='text-center py-8 text-red-600'>{error}</div>;
 
   return (
     <div className='container mx-auto px-4 py-8'>
       <div className='flex justify-between items-center mb-6'>
         <h1 className='text-2xl font-bold'>Manajemen Pesanan</h1>
+        {unreadPaymentProofs > 0 && (
+          <div className='bg-red-500 text-white px-3 py-1 rounded-full text-sm mr-4'>
+            {unreadPaymentProofs} bukti pembayaran baru
+          </div>
+        )}
         <div className='flex items-center gap-4'>
-          <label className='text-sm text-gray-600'>Filter berdasarkan Status:</label>
-          <select
-            value={filteredStatus}
-            onChange={(e) => setFilteredStatus(e.target.value)}
-            className='border rounded-md px-3 py-1'
-          >
-            <option value="all">Semua Pesanan</option>
-            <option value="Tertunda">Tertunda</option>
-                    <option value="Sedang Proses">Diproses</option>
-                    <option value="Dikirim">Dikirim</option>
-                    <option value="Terkirim">Terkirim</option>
-                    <option value="Dibatalkan">Dibatalkan</option>
-          </select>
+          {/* Filter Status */}
+          <div className='flex items-center gap-2'>
+            <label className='text-sm text-gray-600'>Status Pesanan:</label>
+            <select
+              value={filteredStatus}
+              onChange={(e) => setFilteredStatus(e.target.value)}
+              className='border rounded-md px-3 py-1'
+            >
+              <option value="all">Semua Status</option>
+              <option value="Tertunda">Tertunda</option>
+              <option value="Diproses">Diproses</option>
+              <option value="Dikirim">Dikirim</option>
+              <option value="Terkirim">Terkirim</option>
+              <option value="Dibatalkan">Dibatalkan</option>
+            </select>
+          </div>
+
+          {/* Filter Bukti Pembayaran */}
+          <div className='flex items-center gap-2'>
+            <label className='text-sm text-gray-600'>Bukti Pembayaran:</label>
+            <select
+              value={filteredPaymentProof}
+              onChange={(e) => setFilteredPaymentProof(e.target.value)}
+              className='border rounded-md px-3 py-1'
+            >
+              <option value="all">Semua</option>
+              <option value="uploaded">Sudah Upload</option>
+              <option value="not_uploaded">Belum Upload</option>
+            </select>
+          </div>
         </div>
       </div>
 
@@ -130,6 +224,17 @@ const AdminOrders = () => {
                     className='text-blue-600 hover:text-blue-900 mr-4'
                   >
                     View Details
+                  </button>
+                  <button
+                    onClick={() => viewPaymentProof(order.id)}
+                    className='text-green-600 hover:text-green-900 mr-4 relative'
+                  >
+                    Lihat Bukti
+                    {order.payment_proof && !order.payment_proof_viewed && (
+                      <span className='absolute -top-2 -right-2 bg-red-500 text-white rounded-full w-4 h-4 flex items-center justify-center text-xs'>
+                        1
+                      </span>
+                    )}
                   </button>
                   <select
                     value={order.status}
